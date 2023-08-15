@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "988113082350",
+    "project_id": "rasitu-210a1",
+    "storage_bucket": "rasitu-210a1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:988113082350:android:075bac99882f75a34520ff",
+        "android_client_info": {
+          "package_name": "com.example.rasitu_login"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "988113082350-6c13rf0lgqa1lceoa7spu9ulkvoo86t8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.rasitu_login",
+            "certificate_hash": "8a92660a1085c68a72d87b596692ff51583dd874"
+          }
+        },
+        {
+          "client_id": "988113082350-a0obre1sbgq9dcrsge1dg7mm9vd5bf5p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBbCkLdgU3hxxpwM1O3D3PMhf0EqudylTA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "988113082350-a0obre1sbgq9dcrsge1dg7mm9vd5bf5p.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
