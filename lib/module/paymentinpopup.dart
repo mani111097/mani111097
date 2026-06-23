@@ -2,13 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:http/http.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:rasitu_login/module/customerNames.dart';
 
 class PaymentInpopup extends StatefulWidget {
-  const PaymentInpopup({Key? key}) : super(key: key);
+  final Function onUpdate;
+  const PaymentInpopup({required this.onUpdate, Key? key}) : super(key: key);
 
   @override
   State<PaymentInpopup> createState() => _PaymentInpopupState();
@@ -68,14 +68,15 @@ class _PaymentInpopupState extends State<PaymentInpopup> {
                           actions: [
                             ElevatedButton(
                               onPressed: () {
-                                Navigator.pop(context, "Cancel");
+                                widget.onUpdate("cancel");
                                 context.go('/home/paymentin');
                               },
                               child: const Text('Leave'),
                             ),
                             TextButton(
                               onPressed: () {
-                                Navigator.pop(context);
+                                widget.onUpdate("add");
+                                context.go('/home/paymentin');
                               },
                               child: const Text('Cancel'),
                             ),
@@ -135,6 +136,7 @@ class _PaymentInpopupState extends State<PaymentInpopup> {
                 ),
                 trailing: GestureDetector(
                     onTap: () {
+                      widget.onUpdate("cancel");
                       context.go('/home/paymentin');
                     },
                     child: const Icon(Icons.close)),

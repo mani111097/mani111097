@@ -42,9 +42,13 @@ class _PartyState extends State<Party> {
           .then((value) {
         if (value.docs.isNotEmpty) {
           value.docs.forEach((element) {
-            setState(() {
-              partyjsonList.add(element.data());
-              partyId.add(element.data()['customerId']);
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (mounted) {
+                setState(() {
+                  partyjsonList.add(element.data());
+                  partyId.add(element.data()['customerId']);
+                });
+              }
             });
           });
         }
@@ -67,34 +71,16 @@ class _PartyState extends State<Party> {
 
   @override
   Widget build(BuildContext context) {
-    partyIndex = widget.page == "customer"
-        ? widget.id.isNotEmpty
-            ? partyId.indexOf(widget.id)
-            : 0
-        : 0;
-    var column = Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          partyjsonList.isNotEmpty
-              ? "Phone: ${partyjsonList[partyIndex]["phone"]}"
-              : "",
-          style: const TextStyle(fontSize: 15),
-        ),
-        Text(
-          partyjsonList.isNotEmpty
-              ? "Email: ${partyjsonList[partyIndex]["email"]}"
-              : "",
-          style: const TextStyle(fontSize: 15),
-        ),
-        Text(
-          partyjsonList.isNotEmpty
-              ? "GST Type: ${partyjsonList[partyIndex]["gstType"]}"
-              : "",
-          style: const TextStyle(fontSize: 15),
-        ),
-      ],
-    );
+    if (widget.page == "customer" &&
+        widget.id.isEmpty &&
+        partyjsonList.isNotEmpty) {
+      context.goNamed('home', pathParameters: {
+        "page": "customer"
+      }, queryParameters: {
+        "id": partyjsonList[partyIndex]["customerId"].toString()
+      });
+    }
+
     return Scaffold(
       body: nodata
           ? noData()
@@ -138,25 +124,25 @@ class _PartyState extends State<Party> {
                                             print(MediaQuery.of(context)
                                                 .size
                                                 .width);
-                                            if (MediaQuery.of(context)
-                                                    .size
-                                                    .width >
-                                                850) {
-                                              print("called popup");
-                                              var res = await showDialog(
-                                                  context: context,
-                                                  builder: (builder) =>
-                                                      Addparties(false, {}));
-                                              if (res == "Added") {
-                                                getData();
-                                              }
-                                            } else {
-                                              var res = await Addparties(
-                                                  false, const {});
+                                            // if (MediaQuery.of(context)
+                                            //         .size
+                                            //         .width >
+                                            //     850) {
+                                            print("called popup");
+                                            var res = await showDialog(
+                                                context: context,
+                                                builder: (builder) =>
+                                                    Addparties(false, {}));
+                                            if (res == "Added") {
+                                              getData();
                                             }
+                                            // } else {
+                                            //   var res = await Addparties(
+                                            //       false, const {});
+                                            // }
                                           },
-                                          child: Row(
-                                            children: const [
+                                          child: const Row(
+                                            children: [
                                               Icon(
                                                 Icons.add,
                                               ),
@@ -195,17 +181,33 @@ class _PartyState extends State<Party> {
                                                               .size
                                                               .width <
                                                           850) {
-                                                        setState(() {
-                                                          partyIndex = i;
-                                                          itemSelection = true;
-                                                        });
+                                                        if (mounted) {
+                                                          setState(() {
+                                                            partyIndex = i;
+                                                            itemSelection =
+                                                                true;
+                                                          });
+                                                        }
                                                       } else {
-                                                        setState(() {
-                                                          partyIndex = i;
-                                                        });
+                                                        if (mounted) {
+                                                          setState(() {
+                                                            partyIndex = i;
+                                                          });
+                                                        }
                                                       }
-                                                      context.go(
-                                                          '/home/customer/${partyjsonList[partyIndex]["customerId"]}');
+                                                      // context.go(
+                                                      //     '/home/customer/${partyjsonList[partyIndex]["customerId"]}');
+                                                      context.goNamed('home',
+                                                          pathParameters: {
+                                                            "page": "customer"
+                                                          },
+                                                          queryParameters: {
+                                                            "id": partyjsonList[
+                                                                        partyIndex]
+                                                                    [
+                                                                    "customerId"]
+                                                                .toString()
+                                                          });
                                                     },
                                                     child: ListTile(
                                                       dense: true,
@@ -328,7 +330,8 @@ class _PartyState extends State<Party> {
                                                                     height: 300,
                                                                     width: 300,
                                                                     padding:
-                                                                        const EdgeInsets.all(
+                                                                        const EdgeInsets
+                                                                            .all(
                                                                             15),
                                                                     child:
                                                                         Column(
@@ -338,8 +341,9 @@ class _PartyState extends State<Party> {
                                                                               25,
                                                                         ),
                                                                         Container(
-                                                                          padding:
-                                                                              const EdgeInsets.all(15),
+                                                                          padding: const EdgeInsets
+                                                                              .all(
+                                                                              15),
                                                                           decoration: BoxDecoration(
                                                                               shape: BoxShape.circle,
                                                                               border: Border.all(color: Colors.red)),
@@ -422,9 +426,11 @@ class _PartyState extends State<Party> {
                                         children: [
                                           InkWell(
                                             onTap: () {
-                                              setState(() {
-                                                selection = 0;
-                                              });
+                                              if (mounted) {
+                                                setState(() {
+                                                  selection = 0;
+                                                });
+                                              }
                                             },
                                             child: Text(
                                               "Overview",
@@ -442,9 +448,11 @@ class _PartyState extends State<Party> {
                                           ),
                                           InkWell(
                                             onTap: () {
-                                              setState(() {
-                                                selection = 1;
-                                              });
+                                              if (mounted) {
+                                                setState(() {
+                                                  selection = 1;
+                                                });
+                                              }
                                             },
                                             child: Text(
                                               "Transaction",
@@ -781,9 +789,11 @@ class _PartyState extends State<Party> {
                                           padding: const EdgeInsets.all(10.0),
                                           child: TextButton(
                                               onPressed: () {
-                                                setState(() {
-                                                  itemSelection = false;
-                                                });
+                                                if (mounted) {
+                                                  setState(() {
+                                                    itemSelection = false;
+                                                  });
+                                                }
                                               },
                                               child: const Text("back")),
                                         ),
@@ -859,8 +869,9 @@ class _PartyState extends State<Party> {
                                                                             300,
                                                                         width:
                                                                             300,
-                                                                        padding:
-                                                                            const EdgeInsets.all(15),
+                                                                        padding: const EdgeInsets
+                                                                            .all(
+                                                                            15),
                                                                         child:
                                                                             Column(
                                                                           children: [
@@ -940,9 +951,11 @@ class _PartyState extends State<Party> {
                                             children: [
                                               InkWell(
                                                 onTap: () {
-                                                  setState(() {
-                                                    selection = 0;
-                                                  });
+                                                  if (mounted) {
+                                                    setState(() {
+                                                      selection = 0;
+                                                    });
+                                                  }
                                                 },
                                                 child: Text(
                                                   "Overview",
@@ -963,9 +976,11 @@ class _PartyState extends State<Party> {
                                               ),
                                               InkWell(
                                                 onTap: () {
-                                                  setState(() {
-                                                    selection = 1;
-                                                  });
+                                                  if (mounted) {
+                                                    setState(() {
+                                                      selection = 1;
+                                                    });
+                                                  }
                                                 },
                                                 child: Text(
                                                   "Transaction",

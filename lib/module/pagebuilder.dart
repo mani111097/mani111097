@@ -11,6 +11,7 @@ import 'package:rasitu_login/module/addparties.dart';
 import 'package:rasitu_login/module/purchaseData.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:rasitu_login/module/sharedpreference.dart';
+import 'package:go_router/go_router.dart';
 
 class PageBuilder extends StatefulWidget {
   String? invoiceId;
@@ -313,7 +314,10 @@ class _PageBuilderState extends State<PageBuilder>
         ),
         actions: [
           InkWell(
-            onTap: () => context.go('/home/${widget.name!.toLowerCase()}'),
+            onTap: () {
+              print(widget.name);
+              context.go('/home/${widget.name!.toLowerCase()}');
+            },
             child: const Padding(
               padding: EdgeInsets.only(right: 10.0),
               child: Icon(
@@ -338,194 +342,169 @@ class _PageBuilderState extends State<PageBuilder>
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Container(
-                                height: 34,
-                                width: 250,
-                                padding:
-                                    const EdgeInsets.only(left: 5, right: 5),
-                                decoration: BoxDecoration(
-                                    border: Border.all(color: Colors.grey),
-                                    borderRadius: BorderRadius.circular(5)),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Theme(
-                                      data: Theme.of(context).copyWith(
-                                          focusColor: Colors.transparent),
-                                      child: DropdownButtonHideUnderline(
-                                        child: DropdownButton2<String>(
-                                          iconStyleData: const IconStyleData(
-                                              icon: SizedBox()),
-                                          isExpanded: true,
-                                          hint: Text(
-                                            'Select Customer',
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              color:
-                                                  Theme.of(context).hintColor,
-                                            ),
-                                          ),
-
-                                          items: customerName
-                                              .map((item) => DropdownMenuItem(
-                                                    value: item,
-                                                    child: Text(
-                                                      item,
-                                                      style: const TextStyle(
-                                                        fontSize: 14,
-                                                      ),
-                                                    ),
-                                                  ))
-                                              .toList(),
-                                          value: selection,
-                                          onChanged: (value) async {
-                                            if (value != "+ Add Customer") {
-                                              for (int i = 0;
-                                                  i < customerList.length;
-                                                  i++) {
-                                                if ("${customerList[i]["companyName"]}" ==
-                                                    value) {
-                                                  if (sos ==
-                                                      customerList[i]["pos"]) {
-                                                    Provider.of<PurchaseData>(
-                                                            context,
-                                                            listen: false)
-                                                        .updategstType("GST");
-                                                    setState(() {
-                                                      customerindex = i;
-                                                      supplystate =
-                                                          customerList[i]
-                                                              ["pos"];
-                                                      taxtype = "GST";
-                                                    });
-                                                  } else {
-                                                    Provider.of<PurchaseData>(
-                                                            context,
-                                                            listen: false)
-                                                        .updategstType("IGST");
-                                                    setState(() {
-                                                      customerindex = i;
-                                                      supplystate =
-                                                          customerList[i]
-                                                              ["pos"];
-                                                      taxtype = "IGST";
-                                                    });
-                                                  }
-                                                }
-                                              }
-                                            } else {
-                                              var res = await showDialog(
-                                                  context: context,
-                                                  builder: (builder) =>
-                                                      Addparties(false, {}));
-
-                                              if (res == "Added") {
-                                                try {
-                                                  await FirebaseFirestore
-                                                      .instance
-                                                      .collection('Customers')
-                                                      .where("uid",
-                                                          isEqualTo: id)
-                                                      .get()
-                                                      .then((value) {
-                                                    if (value.docs.isNotEmpty) {
-                                                      setState(() {
-                                                        customerList.clear();
-                                                      });
-                                                      for (var element
-                                                          in value.docs) {
-                                                        setState(() {
-                                                          customerList.add(
-                                                              element.data());
-                                                          customerName.add(
-                                                              element.data()[
-                                                                  "companyName"]);
-                                                        });
-                                                      }
-                                                    }
-                                                  });
-                                                  setState(() {
-                                                    customerName
-                                                        .add("+ Add Customer");
-                                                  });
-                                                } catch (e) {
-                                                  print(e);
-                                                }
-                                              }
-                                            }
-
-                                            setState(() {
-                                              selection = value as String;
-                                            });
-                                          },
-                                          buttonStyleData:
-                                              const ButtonStyleData(
-                                            height: 40,
-                                            width: 200,
-                                          ),
-                                          dropdownStyleData:
-                                              const DropdownStyleData(
-                                            maxHeight: 200,
-                                          ),
-                                          menuItemStyleData:
-                                              const MenuItemStyleData(
-                                            height: 40,
-                                          ),
-                                          dropdownSearchData:
-                                              DropdownSearchData(
-                                            searchController: name,
-                                            searchInnerWidgetHeight: 50,
-                                            searchInnerWidget: Container(
-                                              height: 50,
-                                              padding: const EdgeInsets.only(
-                                                top: 8,
-                                                bottom: 4,
-                                                right: 8,
-                                                left: 8,
-                                              ),
-                                              child: TextFormField(
-                                                expands: true,
-                                                maxLines: null,
-                                                controller: name,
-                                                decoration: InputDecoration(
-                                                  isDense: true,
-                                                  contentPadding:
-                                                      const EdgeInsets
-                                                          .symmetric(
-                                                    horizontal: 10,
-                                                    vertical: 8,
-                                                  ),
-                                                  border: OutlineInputBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            5),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            searchMatchFn: (item, searchValue) {
-                                              return (item.value!
-                                                  .toLowerCase()
-                                                  .toString()
-                                                  .contains(searchValue
-                                                      .toLowerCase()));
-                                            },
-                                          ),
-                                          //This to clear the search value when you close the menu
-                                          onMenuStateChange: (isOpen) {
-                                            if (!isOpen) {
-                                              name.clear();
-                                            }
-                                          },
-                                        ),
+                              height: 34,
+                              width: 250,
+                              padding: const EdgeInsets.only(left: 5, right: 5),
+                              decoration: BoxDecoration(
+                                  border: Border.all(color: Colors.grey),
+                                  borderRadius: BorderRadius.circular(5)),
+                              child: Theme(
+                                data: Theme.of(context)
+                                    .copyWith(focusColor: Colors.transparent),
+                                child: DropdownButtonHideUnderline(
+                                  child: DropdownButton2<String>(
+                                    iconStyleData:
+                                        const IconStyleData(icon: SizedBox()),
+                                    isExpanded: true,
+                                    hint: Text(
+                                      'Select Customer',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Theme.of(context).hintColor,
                                       ),
                                     ),
-                                    Icon(
-                                      Icons.person_add,
-                                      color: maincolor,
-                                    )
-                                  ],
-                                )),
+
+                                    items: customerName
+                                        .map((item) => DropdownMenuItem(
+                                              value: item,
+                                              child: Text(
+                                                item,
+                                                style: const TextStyle(
+                                                  fontSize: 14,
+                                                ),
+                                              ),
+                                            ))
+                                        .toList(),
+                                    value: selection,
+                                    onChanged: (value) async {
+                                      if (value != "+ Add Customer") {
+                                        for (int i = 0;
+                                            i < customerList.length;
+                                            i++) {
+                                          if ("${customerList[i]["companyName"]}" ==
+                                              value) {
+                                            if (sos == customerList[i]["pos"]) {
+                                              Provider.of<PurchaseData>(context,
+                                                      listen: false)
+                                                  .updategstType("GST");
+                                              setState(() {
+                                                customerindex = i;
+                                                supplystate =
+                                                    customerList[i]["pos"];
+                                                taxtype = "GST";
+                                              });
+                                            } else {
+                                              Provider.of<PurchaseData>(context,
+                                                      listen: false)
+                                                  .updategstType("IGST");
+                                              setState(() {
+                                                customerindex = i;
+                                                supplystate =
+                                                    customerList[i]["pos"];
+                                                taxtype = "IGST";
+                                              });
+                                            }
+                                          }
+                                        }
+                                      } else {
+                                        var res = await showDialog(
+                                            context: context,
+                                            builder: (builder) =>
+                                                Addparties(false, {}));
+
+                                        if (res == "Added") {
+                                          try {
+                                            await FirebaseFirestore.instance
+                                                .collection('Customers')
+                                                .where("uid", isEqualTo: id)
+                                                .get()
+                                                .then((value) {
+                                              if (value.docs.isNotEmpty) {
+                                                setState(() {
+                                                  customerList.clear();
+                                                });
+                                                for (var element
+                                                    in value.docs) {
+                                                  setState(() {
+                                                    customerList
+                                                        .add(element.data());
+                                                    customerName.add(element
+                                                        .data()["companyName"]);
+                                                  });
+                                                }
+                                              }
+                                            });
+                                            setState(() {
+                                              customerName
+                                                  .add("+ Add Customer");
+                                            });
+                                          } catch (e) {
+                                            print(e);
+                                          }
+                                        }
+                                      }
+
+                                      setState(() {
+                                        selection = value as String;
+                                      });
+                                    },
+                                    buttonStyleData: const ButtonStyleData(
+                                      height: 40,
+                                      width: 200,
+                                    ),
+                                    dropdownStyleData: const DropdownStyleData(
+                                      maxHeight: 200,
+                                    ),
+                                    menuItemStyleData: const MenuItemStyleData(
+                                      height: 40,
+                                    ),
+                                    dropdownSearchData: DropdownSearchData(
+                                      searchController: name,
+                                      searchInnerWidgetHeight: 50,
+                                      searchInnerWidget: Container(
+                                        height: 50,
+                                        padding: const EdgeInsets.only(
+                                          top: 8,
+                                          bottom: 4,
+                                          right: 8,
+                                          left: 8,
+                                        ),
+                                        child: TextFormField(
+                                          expands: true,
+                                          maxLines: null,
+                                          controller: name,
+                                          decoration: InputDecoration(
+                                            isDense: true,
+                                            contentPadding:
+                                                const EdgeInsets.symmetric(
+                                              horizontal: 10,
+                                              vertical: 8,
+                                            ),
+                                            border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(5),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      searchMatchFn: (item, searchValue) {
+                                        return (item.value!
+                                            .toLowerCase()
+                                            .toString()
+                                            .contains(
+                                                searchValue.toLowerCase()));
+                                      },
+                                    ),
+                                    //This to clear the search value when you close the menu
+                                    onMenuStateChange: (isOpen) {
+                                      if (!isOpen) {
+                                        name.clear();
+                                      }
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ),
                             const SizedBox(
                               height: 15,
                             ),

@@ -28,7 +28,7 @@ class _FailureState extends State<Failure> {
             ),
             ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                    primary: const Color.fromARGB(255, 65, 125, 255)),
+                    backgroundColor: const Color.fromARGB(255, 65, 125, 255)),
                 onPressed: () {
                   context.go("/login");
                 },

@@ -35,12 +35,14 @@ class _InvoiceState extends State<Invoice> {
             .then((value) {
           if (value.docs.isNotEmpty) {
             value.docs.forEach((element) {
-              setState(() {
-                totalInvoice =
-                    totalInvoice + double.parse(element.data()["total"]);
-                balance = balance + double.parse(element.data()["balance"]);
-                invoiceList.add(element.data());
-              });
+              if (mounted) {
+                setState(() {
+                  totalInvoice =
+                      totalInvoice + double.parse(element.data()["total"]);
+                  balance = balance + double.parse(element.data()["balance"]);
+                  invoiceList.add(element.data());
+                });
+              }
             });
           }
         });
@@ -522,14 +524,16 @@ class _InvoiceState extends State<Invoice> {
         underline: SizedBox(),
 
         onChanged: (String? newValue) {
-          setState(() {
-            months = newValue == "Past Month"
-                ? 1
-                : newValue == "Past 3 months"
-                    ? 3
-                    : 12;
-            timepicker = newValue!;
-          });
+          if (mounted) {
+            setState(() {
+              months = newValue == "Past Month"
+                  ? 1
+                  : newValue == "Past 3 months"
+                      ? 3
+                      : 12;
+              timepicker = newValue!;
+            });
+          }
         },
       ),
     );

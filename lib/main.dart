@@ -50,7 +50,7 @@ class _MyAppState extends State<MyApp> {
         debugShowCheckedModeBanner: false,
         title: 'Rasitu',
         theme: Theme.of(context)
-            .copyWith(buttonColor: const Color.fromARGB(255, 65, 125, 255)),
+            .copyWith(primaryColor: const Color.fromARGB(255, 65, 125, 255)),
         routerConfig: RouteHandler().router,
       ),
     );

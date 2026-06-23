@@ -56,10 +56,16 @@ class _PaymentinState extends State<Paymentin> {
 
   @override
   Widget build(BuildContext context) {
-    addPayment = widget.type.isEmpty ? false : true;
+    // addPayment = widget.type.isEmpty ? false : true;
     return Scaffold(
       body: addPayment
-          ? const PaymentInpopup()
+          ? PaymentInpopup(
+              onUpdate: (value) {
+                setState(() {
+                  addPayment = false;
+                });
+              },
+            )
           : Column(
               children: [
                 Container(
@@ -123,10 +129,16 @@ class _PaymentinState extends State<Paymentin> {
                                     style: ElevatedButton.styleFrom(
                                         backgroundColor: maincolor),
                                     onPressed: () {
-                                      // setState(() {
-                                      //   addPayment = true;
-                                      // });
-                                      context.go('/home/paymentin/new');
+                                      setState(() {
+                                        addPayment = true;
+                                      });
+                                      //context.go('/home/paymentin/new');
+                                      context.goNamed('home', pathParameters: {
+                                        "page": "paymentin"
+                                      }, queryParameters: {
+                                        "id": "",
+                                        "type": "New"
+                                      });
                                     },
                                     child: Text(
                                       "New Payment".toUpperCase(),

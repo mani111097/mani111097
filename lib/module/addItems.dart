@@ -1,11 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:rasitu_login/main.dart';
-import 'package:http/http.dart' as http;
 import 'package:rasitu_login/module/sharedpreference.dart';
 
+// ignore: must_be_immutable
 class addItems extends StatefulWidget {
   bool update;
   Map jsonList;
@@ -322,10 +320,10 @@ class _addItemsState extends State<addItems> {
                                                     const OutlineInputBorder(),
                                                 prefixIcon: Container(
                                                   color: Colors.grey,
-                                                  child: Row(
+                                                  child: const Row(
                                                     mainAxisSize:
                                                         MainAxisSize.min,
-                                                    children: const <Widget>[
+                                                    children: <Widget>[
                                                       Padding(
                                                         padding: EdgeInsets
                                                             .symmetric(
@@ -408,10 +406,10 @@ class _addItemsState extends State<addItems> {
                                                 fillColor: Colors.grey[300],
                                                 prefixIcon: Container(
                                                   color: Colors.grey,
-                                                  child: Row(
+                                                  child: const Row(
                                                     mainAxisSize:
                                                         MainAxisSize.min,
-                                                    children: const <Widget>[
+                                                    children: <Widget>[
                                                       Padding(
                                                         padding: EdgeInsets
                                                             .symmetric(
@@ -496,9 +494,9 @@ class _addItemsState extends State<addItems> {
                                           border: const OutlineInputBorder(),
                                           prefixIcon: Container(
                                             color: Colors.grey,
-                                            child: Row(
+                                            child: const Row(
                                               mainAxisSize: MainAxisSize.min,
-                                              children: const <Widget>[
+                                              children: <Widget>[
                                                 Padding(
                                                   padding: EdgeInsets.symmetric(
                                                       horizontal: 10),

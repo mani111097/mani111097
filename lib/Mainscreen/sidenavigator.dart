@@ -17,14 +17,14 @@ import 'package:rasitu_login/Mainscreen/sales/estimate.dart';
 import 'package:rasitu_login/Mainscreen/sales/paymentin.dart';
 import 'package:rasitu_login/Mainscreen/sales/salesorder.dart';
 import 'package:rasitu_login/main.dart';
-import 'package:rasitu_login/module/paymentinpopup.dart';
 import 'package:rasitu_login/module/sharedpreference.dart';
 
 class SideNavigator extends StatefulWidget {
   final String page;
   final String id;
+  final String type;
 
-  SideNavigator({required this.page, this.id = ""});
+  SideNavigator({required this.page, this.id = "", this.type = ""});
 
   @override
   State<SideNavigator> createState() => _SideNavigatorState();
@@ -829,8 +829,9 @@ class _SideNavigatorState extends State<SideNavigator> {
                                 const CreditNotes(),
                                 const PurchaseBill(),
                                 const PurchaseOrder(),
-                                const Expenses(),
-                                const PaymentInpopup(),
+                                Expenses(
+                                  type: widget.type,
+                                ),
                               ],
                             ),
                           ))
@@ -865,7 +866,9 @@ class _SideNavigatorState extends State<SideNavigator> {
                         const CreditNotes(),
                         const PurchaseBill(),
                         const PurchaseOrder(),
-                        const Expenses()
+                        Expenses(
+                          type: widget.type,
+                        ),
                       ],
                     ),
                   ))

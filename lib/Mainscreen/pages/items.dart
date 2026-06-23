@@ -1,16 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 import 'package:flutter/material.dart';
-
+import 'package:flutter/scheduler.dart';
 import 'package:go_router/go_router.dart';
-
 import 'package:rasitu_login/module/addItems.dart';
-
 import 'package:rasitu_login/module/sharedpreference.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../main.dart';
 import 'package:intl/intl.dart';
 
+// ignore: must_be_immutable
 class Items extends StatefulWidget {
   final String id;
   String page;
@@ -52,11 +50,16 @@ class _ItemsState extends State<Items> {
           .where("uid", isEqualTo: id)
           .get()
           .then((value) => value.docs.forEach((element) {
-                setState(() {
-                  itemids.add(element.id);
-                  jsonList.add(element.data());
+                SchedulerBinding.instance.addPostFrameCallback((_) {
+                  if (mounted) {
+                    setState(() {
+                      itemids.add(element.id);
+                      jsonList.add(element.data());
+                    });
+                  }
                 });
               }));
+      print("page ${widget.page}");
     } on Exception catch (e) {
       print("Exception returns ${e.toString().isNotEmpty}");
     } catch (e) {
@@ -76,11 +79,11 @@ class _ItemsState extends State<Items> {
 
   @override
   Widget build(BuildContext context) {
-    jsonIndex = widget.page == "items"
-        ? widget.id.isNotEmpty
-            ? itemids.indexOf(widget.id)
-            : 0
-        : 0;
+    if (widget.page == "items" && widget.id.isEmpty && itemids.isNotEmpty) {
+      context.goNamed('home',
+          pathParameters: {"page": "items"},
+          queryParameters: {"id": jsonList[jsonIndex]["itemId"].toString()});
+    }
 
     return Scaffold(
       body: Column(
@@ -96,22 +99,29 @@ class _ItemsState extends State<Items> {
                         onUpdate: (value) {
                           print(value);
                           if (value == "add") {
-                            setState(() {
-                              noitems = false;
-                              additem = false;
-                            });
+                            if (mounted) {
+                              setState(() {
+                                noitems = false;
+                                additem = false;
+                              });
+                            }
+
                             jsonList.clear();
                             getData();
                           } else {
                             if (jsonList.isNotEmpty) {
-                              setState(() {
-                                additem = false;
-                              });
+                              if (mounted) {
+                                setState(() {
+                                  additem = false;
+                                });
+                              }
                             } else {
-                              setState(() {
-                                noitems = true;
-                                additem = false;
-                              });
+                              if (mounted) {
+                                setState(() {
+                                  noitems = true;
+                                  additem = false;
+                                });
+                              }
                             }
                           }
                         },
@@ -146,13 +156,24 @@ class _ItemsState extends State<Items> {
                                         style: ElevatedButton.styleFrom(
                                             backgroundColor: maincolor),
                                         onPressed: () {
-                                          setState(() {
-                                            additem = true;
-                                            additemtype = false;
-                                          });
+                                          if (mounted) {
+                                            setState(() {
+                                              additem = true;
+                                              additemtype = false;
+                                            });
+                                          }
+
+                                          context.goNamed('home',
+                                              pathParameters: {
+                                                "page": "items"
+                                              },
+                                              queryParameters: {
+                                                "id": "null",
+                                                "type": "new"
+                                              });
                                         },
-                                        child: Row(
-                                          children: const [
+                                        child: const Row(
+                                          children: [
                                             Icon(
                                               Icons.add,
                                             ),
@@ -189,16 +210,29 @@ class _ItemsState extends State<Items> {
                                                           .size
                                                           .width <
                                                       850) {
-                                                    setState(() {
-                                                      jsonIndex = i;
-                                                      itemSelection = true;
-                                                    });
+                                                    if (mounted) {
+                                                      setState(() {
+                                                        jsonIndex = i;
+                                                        itemSelection = true;
+                                                      });
+                                                    }
                                                   } else {
-                                                    setState(() {
-                                                      jsonIndex = i;
-                                                    });
-                                                    context.go(
-                                                        '/home/items/${jsonList[i]["itemId"]}');
+                                                    if (mounted) {
+                                                      setState(() {
+                                                        jsonIndex = i;
+                                                      });
+                                                    }
+
+                                                    context.goNamed('home',
+                                                        pathParameters: {
+                                                          "page": "items"
+                                                        },
+                                                        queryParameters: {
+                                                          "id": jsonList[
+                                                                      jsonIndex]
+                                                                  ["itemId"]
+                                                              .toString()
+                                                        });
                                                   }
                                                 },
                                                 child: ListTile(
@@ -294,11 +328,13 @@ class _ItemsState extends State<Items> {
                                                                   backgroundColor:
                                                                       maincolor),
                                                           onPressed: () {
-                                                            setState(() {
-                                                              additem = true;
-                                                              additemtype =
-                                                                  true;
-                                                            });
+                                                            if (mounted) {
+                                                              setState(() {
+                                                                additem = true;
+                                                                additemtype =
+                                                                    true;
+                                                              });
+                                                            }
                                                           },
                                                           child: const Text(
                                                               "Adjustment")),
@@ -746,9 +782,11 @@ class _ItemsState extends State<Items> {
                                                   const EdgeInsets.all(8.0),
                                               child: ElevatedButton(
                                                   onPressed: () {
-                                                    setState(() {
-                                                      itemSelection = false;
-                                                    });
+                                                    if (mounted) {
+                                                      setState(() {
+                                                        itemSelection = false;
+                                                      });
+                                                    }
                                                   },
                                                   child: const Text("Back")),
                                             ),
@@ -806,12 +844,15 @@ class _ItemsState extends State<Items> {
                                                                         backgroundColor:
                                                                             maincolor),
                                                                 onPressed: () {
-                                                                  setState(() {
-                                                                    additem =
-                                                                        true;
-                                                                    additemtype =
-                                                                        true;
-                                                                  });
+                                                                  if (mounted) {
+                                                                    setState(
+                                                                        () {
+                                                                      additem =
+                                                                          true;
+                                                                      additemtype =
+                                                                          true;
+                                                                    });
+                                                                  }
                                                                 },
                                                                 child: const Text(
                                                                     "Adjustment")),
@@ -822,7 +863,7 @@ class _ItemsState extends State<Items> {
                                                       Padding(
                                                         padding:
                                                             const EdgeInsets
-                                                                    .only(
+                                                                .only(
                                                                 left: 18.0,
                                                                 right: 18.0),
                                                         child: Row(
@@ -1185,10 +1226,12 @@ class _ItemsState extends State<Items> {
           ),
           ElevatedButton(
               onPressed: () {
-                setState(() {
-                  additem = true;
-                  noitems = false;
-                });
+                if (mounted) {
+                  setState(() {
+                    additem = true;
+                    noitems = false;
+                  });
+                }
               },
               child: const Padding(
                 padding: EdgeInsets.all(8.0),
@@ -1197,5 +1240,21 @@ class _ItemsState extends State<Items> {
         ],
       ),
     );
+  }
+}
+
+// ignore: must_be_immutable
+class DetailsContainer extends StatefulWidget {
+  Map<String, dynamic> details = {};
+  DetailsContainer({required this.details, Key? key}) : super(key: key);
+
+  @override
+  State<DetailsContainer> createState() => _DetailsContainerState();
+}
+
+class _DetailsContainerState extends State<DetailsContainer> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(body: Text(widget.details.toString()));
   }
 }

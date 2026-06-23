@@ -20,27 +20,26 @@ class RouteHandler {
       path: "/failed",
       builder: (context, state) => const Failure(),
     ),
-    // GoRoute(path: "/items/new",builder: (context, state) => SideNavigator(
-    //           page: state.pathParameters["page"]!,
-    //         )),
     GoRoute(
         name: "home",
         path: "/home/:page",
-        pageBuilder: (context, state) => NoTransitionPage(
-            key: state.pageKey,
-            child: SideNavigator(
+        builder: (context, state) {
+          if (state.uri.queryParameters.isEmpty) {
+            return SideNavigator(
               page: state.pathParameters["page"]!,
-            )),
-        routes: [
-          GoRoute(
-              path: ':id',
-              pageBuilder: (context, state) => NoTransitionPage(
-                    key: state.pageKey,
-                    child: SideNavigator(
-                        page: state.pathParameters["page"]!,
-                        id: state.pathParameters["id"]!),
-                  ))
-        ]),
+              // id: state.uri.queryParameters["id"] ?? "",
+              // type: state.uri.queryParameters["type"] ?? "",
+            );
+          } else {
+            return SideNavigator(
+              page: state.pathParameters["page"]!,
+              id: state.uri.queryParameters["id"] ?? "",
+              type: state.uri.queryParameters["type"] ?? "",
+            );
+          }
+
+          // }
+        }),
     GoRoute(
         name: "invoice",
         path: "/invoice",

@@ -775,164 +775,7 @@ class _AddpartiesState extends State<Addparties> {
                               height: 35,
                               width: 90,
                               child: ElevatedButton(
-                                  onPressed: () async {
-                                    try {
-                                      String uid = await _prefService
-                                          .readId()
-                                          .then((value) => value);
-                                      setState(() {
-                                        id = uid;
-                                      });
-                                    } catch (e) {
-                                      Navigator.pushNamed(context, '/failure');
-                                    }
-                                    if (_key.currentState!.validate()) {
-                                      if (widget.edit) {
-                                        if (gsttype != null &&
-                                            placeofsupply != null) {
-                                          setState(() {
-                                            validator = false;
-                                          });
-                                          Map<String, dynamic> body = {
-                                            "uid": id,
-                                            "customerId": widget
-                                                .customerDetails["CustomerId"],
-                                            'type': type == 0
-                                                ? "Business"
-                                                : "Individual",
-                                            'firstName': firstname.text,
-                                            'lastName': lastname.text,
-                                            'companyName': companyname.text,
-                                            'email': email.text,
-                                            'phone': phone.text,
-                                            'gstType': gsttype,
-                                            'gstIN': gstin.text.isNotEmpty
-                                                ? gstin.text
-                                                : "",
-                                            'pos': placeofsupply,
-                                            'rop': toReceive.text.isNotEmpty
-                                                ? toReceive.text
-                                                : "",
-                                            'ropAmount': toPay.text.isNotEmpty
-                                                ? toPay.text
-                                                : "0",
-                                            'billingAddress': {
-                                              'billStreet': billstreet.text,
-                                              'billArea': billarea.text,
-                                              'billCity': billcity.text,
-                                              'billState': billstate.text,
-                                              'billZipcode': billzipcode.text,
-                                              'billPhone': billPhone.text,
-                                              'billEmail': billemail.text,
-                                            },
-                                            'shippingAddress': {
-                                              'shipStreet': shipstreet.text,
-                                              'shipArea': shiparea.text,
-                                              'shipCity': shipcity.text,
-                                              'shipState': shipstate.text,
-                                              'shipZipcode': shipzipcode.text,
-                                              'shipPhone': shipPhone.text,
-                                              'shipEmail': shipemail.text,
-                                            }
-                                          };
-
-                                          print(body);
-
-                                          try {
-                                            FirebaseFirestore.instance
-                                                .collection('Customers')
-                                                .doc(widget.customerDetails[
-                                                        "CustomerId"]
-                                                    .toString())
-                                                .update(body)
-                                                .whenComplete(() {
-                                              Navigator.pop(context, "Added");
-                                            });
-                                          } catch (e) {
-                                            print(e);
-                                          }
-                                        } else {
-                                          setState(() {
-                                            validator = true;
-                                          });
-                                        }
-                                      } else {
-                                        if (gsttype != null &&
-                                            placeofsupply != null) {
-                                          setState(() {
-                                            validator = false;
-                                          });
-
-                                          int customerId =
-                                              await getCustomerId() + 1;
-
-                                          Map<String, dynamic> body = {
-                                            "uid": id,
-                                            "customerId": customerId.toString(),
-                                            'type': type == 0
-                                                ? "Business"
-                                                : "Individual",
-                                            'firstName': firstname.text,
-                                            'lastName': lastname.text,
-                                            'companyName': companyname.text,
-                                            'email': email.text,
-                                            'phone': phone.text,
-                                            'gstType': gsttype,
-                                            'gstIN': gstin.text.isNotEmpty
-                                                ? gstin.text
-                                                : "",
-                                            'pos': placeofsupply,
-                                            'rop': toReceive.text.isNotEmpty
-                                                ? toReceive.text
-                                                : "",
-                                            'ropAmount': toPay.text.isNotEmpty
-                                                ? toPay.text
-                                                : "0",
-                                            'billingAddress': {
-                                              'billStreet': billstreet.text,
-                                              'billArea': billarea.text,
-                                              'billCity': billcity.text,
-                                              'billState': billstate.text,
-                                              'billZipcode': billzipcode.text,
-                                              'billPhone': billPhone.text,
-                                              'billEmail': billemail.text,
-                                            },
-                                            'shippingAddress': {
-                                              'shipStreet': shipstreet.text,
-                                              'shipArea': shiparea.text,
-                                              'shipCity': shipcity.text,
-                                              'shipState': shipstate.text,
-                                              'shipZipcode': shipzipcode.text,
-                                              'shipPhone': shipPhone.text,
-                                              'shipEmail': shipemail.text,
-                                            }
-                                          };
-
-                                          try {
-                                            FirebaseFirestore.instance
-                                                .collection('Customers')
-                                                .doc(customerId.toString())
-                                                .set(body)
-                                                .whenComplete(() {
-                                              FirebaseFirestore.instance
-                                                  .collection("local")
-                                                  .doc("local")
-                                                  .update({
-                                                "customerId": customerId
-                                              });
-                                              Navigator.pop(context, "Added");
-                                            });
-                                          } catch (e) {
-                                            print(e);
-                                          }
-                                        } else {
-                                          setState(() {
-                                            validator = true;
-                                          });
-                                        }
-                                      }
-                                    }
-                                  },
+                                  onPressed: () async {},
                                   child: Text(
                                     widget.edit ? "Update" : "Save",
                                     style: TextStyle(color: Colors.white),
@@ -944,6 +787,139 @@ class _AddpartiesState extends State<Addparties> {
             ),
           )),
     );
+  }
+
+  customerValidation() async {
+    try {
+      String uid = await _prefService.readId().then((value) => value);
+      setState(() {
+        id = uid;
+      });
+    } catch (e) {
+      Navigator.pushNamed(context, '/failure');
+    }
+    if (_key.currentState!.validate()) {
+      if (widget.edit) {
+        if (gsttype != null && placeofsupply != null) {
+          setState(() {
+            validator = false;
+          });
+          Map<String, dynamic> body = {
+            "uid": id,
+            "customerId": widget.customerDetails["CustomerId"],
+            'type': type == 0 ? "Business" : "Individual",
+            'firstName': firstname.text,
+            'lastName': lastname.text,
+            'companyName': companyname.text,
+            'email': email.text,
+            'phone': phone.text,
+            'gstType': gsttype,
+            'gstIN': gstin.text.isNotEmpty ? gstin.text : "",
+            'pos': placeofsupply,
+            'rop': toReceive.text.isNotEmpty ? toReceive.text : "",
+            'ropAmount': toPay.text.isNotEmpty ? toPay.text : "0",
+            'billingAddress': {
+              'billStreet': billstreet.text,
+              'billArea': billarea.text,
+              'billCity': billcity.text,
+              'billState': billstate.text,
+              'billZipcode': billzipcode.text,
+              'billPhone': billPhone.text,
+              'billEmail': billemail.text,
+            },
+            'shippingAddress': {
+              'shipStreet': shipstreet.text,
+              'shipArea': shiparea.text,
+              'shipCity': shipcity.text,
+              'shipState': shipstate.text,
+              'shipZipcode': shipzipcode.text,
+              'shipPhone': shipPhone.text,
+              'shipEmail': shipemail.text,
+            }
+          };
+
+          print(body);
+
+          try {
+            FirebaseFirestore.instance
+                .collection('Customers')
+                .doc(widget.customerDetails["CustomerId"].toString())
+                .update(body)
+                .whenComplete(() {
+              Navigator.pop(context, "Added");
+            });
+          } catch (e) {
+            print(e);
+          }
+        } else {
+          setState(() {
+            validator = true;
+          });
+        }
+      } else {
+        if (gsttype != null && placeofsupply != null) {
+          setState(() {
+            validator = false;
+          });
+
+          int customerId = await getCustomerId() + 1;
+
+          Map<String, dynamic> body = {
+            "uid": id,
+            "customerId": customerId.toString(),
+            'type': type == 0 ? "Business" : "Individual",
+            'firstName': firstname.text,
+            'lastName': lastname.text,
+            'companyName': companyname.text,
+            'email': email.text,
+            'phone': phone.text,
+            'gstType': gsttype,
+            'gstIN': gstin.text.isNotEmpty ? gstin.text : "",
+            'pos': placeofsupply,
+            'rop': toReceive.text.isNotEmpty ? toReceive.text : "",
+            'ropAmount': toPay.text.isNotEmpty ? toPay.text : "0",
+            'billingAddress': {
+              'billStreet': billstreet.text,
+              'billArea': billarea.text,
+              'billCity': billcity.text,
+              'billState': billstate.text,
+              'billZipcode': billzipcode.text,
+              'billPhone': billPhone.text,
+              'billEmail': billemail.text,
+            },
+            'shippingAddress': {
+              'shipStreet': shipstreet.text,
+              'shipArea': shiparea.text,
+              'shipCity': shipcity.text,
+              'shipState': shipstate.text,
+              'shipZipcode': shipzipcode.text,
+              'shipPhone': shipPhone.text,
+              'shipEmail': shipemail.text,
+            }
+          };
+
+          try {
+            FirebaseFirestore.instance
+                .collection('Customers')
+                .doc(customerId.toString())
+                .set(body)
+                .whenComplete(() {
+              FirebaseFirestore.instance
+                  .collection("local")
+                  .doc("local")
+                  .update({"customerId": customerId});
+              Navigator.pop(context, "Added");
+            });
+          } catch (e) {
+            print(e);
+          }
+        } else {
+          setState(() {
+            validator = true;
+          });
+        }
+      }
+    }
   }
 
   gsttypedropdown() {

@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:rasitu_login/main.dart';
+import 'package:rasitu_login/module/addExpenses.dart';
 import 'package:rasitu_login/module/sharedpreference.dart';
 
 class Expenses extends StatefulWidget {
-  const Expenses({Key? key}) : super(key: key);
+  String? type;
+  Expenses({this.type = "", Key? key}) : super(key: key);
 
   @override
   State<Expenses> createState() => _ExpensesState();
@@ -15,163 +17,192 @@ class Expenses extends StatefulWidget {
 class _ExpensesState extends State<Expenses> {
   String timepicker = "Past Month";
   int months = 1;
+  bool addExpense = false;
   List orderList = [];
   final PrefService _prefService = PrefService();
 
   @override
   Widget build(BuildContext context) {
+    print("type ${widget.type}");
+    addExpense = widget.type == "New" ? true : false;
     return Scaffold(
-      body: Column(
-        children: [
-          Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height * 0.92,
-              //color: Colors.white,
-              padding: const EdgeInsets.only(left: 30, top: 10),
-              child: Column(
-                children: [
-                  ListTile(
-                    title: const Text(
-                      "Expenses",
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                    subtitle: SizedBox(
-                      height: 20,
-                      child: Row(
-                        children: [
-                          timepickerDropdown(),
-                          const SizedBox(
-                            width: 5,
+      body: addExpense
+          ? AddExpenses(
+              update: (value) {
+                if (value == 'cancel') {
+                  setState(() {
+                    addExpense = false;
+                  });
+                } else {
+                  setState(() {
+                    addExpense = false;
+                  });
+                }
+              },
+            )
+          : Column(
+              children: [
+                Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height * 0.92,
+                    //color: Colors.white,
+                    padding: const EdgeInsets.only(left: 30, top: 10),
+                    child: Column(
+                      children: [
+                        ListTile(
+                          title: const Text(
+                            "Expenses",
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold),
                           ),
-                          Text(Jiffy()
-                              .subtract(months: months)
-                              .format('yyyy-MM-dd')),
-                          const SizedBox(
-                            width: 5,
-                          ),
-                          const Text("to"),
-                          const SizedBox(
-                            width: 5,
-                          ),
-                          Text(Jiffy().format('yyyy-MM-dd'))
-                        ],
-                      ),
-                    ),
-                    trailing: SizedBox(
-                      width: 300,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: const [
-                              Icon(Icons.document_scanner),
-                              Text("Export")
-                            ],
-                          ),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: const [Icon(Icons.print), Text("Print")],
-                          ),
-                          SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.05,
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                  backgroundColor: maincolor),
-                              onPressed: () {
-                                context.go('/creditnotes/new');
-                              },
-                              child: Text(
-                                "New Expenses".toUpperCase(),
-                                //style: GoogleFonts.ptSerif(),
-                              ),
+                          subtitle: SizedBox(
+                            height: 20,
+                            child: Row(
+                              children: [
+                                timepickerDropdown(),
+                                const SizedBox(
+                                  width: 5,
+                                ),
+                                Text(Jiffy()
+                                    .subtract(months: months)
+                                    .format('yyyy-MM-dd')),
+                                const SizedBox(
+                                  width: 5,
+                                ),
+                                const Text("to"),
+                                const SizedBox(
+                                  width: 5,
+                                ),
+                                Text(Jiffy().format('yyyy-MM-dd'))
+                              ],
                             ),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                  Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Column(
-                        children: [
-                          Table(
-                            border: TableBorder.symmetric(
-                              outside: BorderSide.none,
-                              inside: const BorderSide(
-                                  width: 0.5,
-                                  color: Colors.grey,
-                                  style: BorderStyle.solid),
+                          ),
+                          trailing: SizedBox(
+                            width: 300,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: const [
+                                    Icon(Icons.document_scanner),
+                                    Text("Export")
+                                  ],
+                                ),
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: const [
+                                    Icon(Icons.print),
+                                    Text("Print")
+                                  ],
+                                ),
+                                SizedBox(
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.05,
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                        backgroundColor: maincolor),
+                                    onPressed: () {
+                                      setState(() {
+                                        addExpense = true;
+                                      });
+                                      context.goNamed('home', pathParameters: {
+                                        "page": "expenses"
+                                      }, queryParameters: {
+                                        "id": "",
+                                        "type": "New"
+                                      });
+                                    },
+                                    child: Text(
+                                      "New Expenses".toUpperCase(),
+                                      //style: GoogleFonts.ptSerif(),
+                                    ),
+                                  ),
+                                )
+                              ],
                             ),
-                            children: [
-                              TableRow(children: [
-                                Padding(
-                                  padding: EdgeInsets.all(10.0),
-                                  child: Text(
-                                    "Expenses No".toUpperCase(),
-                                    style: const TextStyle(
-                                        color: Colors.grey,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.all(10.0),
-                                  child: Text(
-                                    "Date".toUpperCase(),
-                                    style: const TextStyle(
-                                        color: Colors.grey,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.all(10.0),
-                                  child: Text(
-                                    "Expense Name".toUpperCase(),
-                                    style: const TextStyle(
-                                        color: Colors.grey,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.all(10.0),
-                                  child: Text(
-                                    "Type".toUpperCase(),
-                                    style: const TextStyle(
-                                        color: Colors.grey,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.all(10.0),
-                                  child: Text(
-                                    "Amount".toUpperCase(),
-                                    style: const TextStyle(
-                                        color: Colors.grey,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.all(10.0),
-                                  child: Text(
-                                    "Status".toUpperCase(),
-                                    style: const TextStyle(
-                                        color: Colors.grey,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                              ])
-                            ],
                           ),
-                          const Divider(
-                            height: 1,
-                          ),
-                        ],
-                      ))
-                ],
-              )),
-        ],
-      ),
+                        ),
+                        Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Column(
+                              children: [
+                                Table(
+                                  border: TableBorder.symmetric(
+                                    outside: BorderSide.none,
+                                    inside: const BorderSide(
+                                        width: 0.5,
+                                        color: Colors.grey,
+                                        style: BorderStyle.solid),
+                                  ),
+                                  children: [
+                                    TableRow(children: [
+                                      Padding(
+                                        padding: EdgeInsets.all(10.0),
+                                        child: Text(
+                                          "Expenses No".toUpperCase(),
+                                          style: const TextStyle(
+                                              color: Colors.grey,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.all(10.0),
+                                        child: Text(
+                                          "Date".toUpperCase(),
+                                          style: const TextStyle(
+                                              color: Colors.grey,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.all(10.0),
+                                        child: Text(
+                                          "Expense Name".toUpperCase(),
+                                          style: const TextStyle(
+                                              color: Colors.grey,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.all(10.0),
+                                        child: Text(
+                                          "Type".toUpperCase(),
+                                          style: const TextStyle(
+                                              color: Colors.grey,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.all(10.0),
+                                        child: Text(
+                                          "Amount".toUpperCase(),
+                                          style: const TextStyle(
+                                              color: Colors.grey,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.all(10.0),
+                                        child: Text(
+                                          "Status".toUpperCase(),
+                                          style: const TextStyle(
+                                              color: Colors.grey,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                    ])
+                                  ],
+                                ),
+                                const Divider(
+                                  height: 1,
+                                ),
+                              ],
+                            ))
+                      ],
+                    )),
+              ],
+            ),
     );
   }
 
@@ -180,15 +211,15 @@ class _ExpensesState extends State<Expenses> {
       data: Theme.of(context).copyWith(focusColor: Colors.transparent),
       child: DropdownButton2(
         buttonStyleData: const ButtonStyleData(
-          height: 25,
-          width: 130,
+          height: 35,
+          width: 250,
         ),
         dropdownStyleData: const DropdownStyleData(
-          maxHeight: 200,
-          width: 180,
+          maxHeight: 250,
+          width: 250,
         ),
         menuItemStyleData: const MenuItemStyleData(
-          height: 25,
+          height: 30,
         ),
         // Initial Value
         value: timepicker,
